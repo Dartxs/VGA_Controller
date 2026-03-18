@@ -1,0 +1,12 @@
+*
+!*.sv
+!*.py
+!*/
+!.gitignore
+/.venv
+/.vscode
+/verilator
+!Makefile
+*/*/__pycache__
+*/*/*/__pycache__
+*/*/*/sim_build
