@@ -7,6 +7,6 @@
 /.vscode
 /verilator
 !Makefile
+*/__pycache__
 */*/__pycache__
-*/*/*/__pycache__
-*/*/*/sim_build
+*/*/sim_build

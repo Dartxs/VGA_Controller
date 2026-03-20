@@ -1,10 +1,10 @@
 /*
 
-Simulation stub for the PLL used in Vivado
+Simulation stub for the MMCM used in Vivado
 
 */
 
-module clk_gen#(
+module clk_gen(
     input logic clk,
     output logic new_clk
 );

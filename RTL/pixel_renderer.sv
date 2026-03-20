@@ -13,10 +13,11 @@ module pixel_renderer(
     output logic [3:0] red, green, blue
 );
 
+    logic [3:0] on_ratio; 
+
     always_comb begin
         {red, green, blue} = '0;
 
-        logic [3:0] on_ratio; 
         on_ratio = (y < 240) ? 4'hF : 4'h8; //fully on in the upper half of screen, about half on in the lower half
 
         if(on) begin

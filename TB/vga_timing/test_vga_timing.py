@@ -1,9 +1,8 @@
 import cocotb
-from cocotb.triggers import Timer, ClockCycles, RisingEdge
+from cocotb.triggers import Timer, RisingEdge
 from cocotb.clock import Clock
-import random
 
-import timings
+import timings as timings
 
 def start_clock(dut, period=10):
     clock = Clock(dut.clk, period, 'ns')
@@ -15,13 +14,15 @@ async def init_test(dut):
     dut.areset.value = 1
     await RisingEdge(dut.clk)
     await Timer(1, 'ns')
+    check_inital(dut)
+
     dut.areset.value = 0
 
 def check_inital(dut):
     Hsync = int(dut.Hsync.value)
     Vsync = int(dut.Vsync.value)
-    video_x = int(dut.video_x.value)
-    video_y = int(dut.video_y.value)
+    video_x = dut.video_x.value.to_unsigned()
+    video_y = dut.video_y.value.to_unsigned()
 
     assert(Hsync == 1), (
         f"FAILED RESET TEST\n"
@@ -51,7 +52,7 @@ def check_syncs(dut, Hcount, Vcount):
     )
 
     V_SYNC = timings.V_SYNC
-    Vsync = dut.Vsync.value
+    Vsync = int(dut.Vsync.value)
     expected_Vsync = int(Vcount >= V_SYNC)
     assert (Vsync == expected_Vsync), (
         f"OUTPUT MISMATCH\n"
@@ -75,7 +76,7 @@ def check_video(dut, Hcount, Vcount):
     )    
 
     video_x = (Hcount - H_video_on) if (actual_video_on) else 0
-    actual_video_x = int(dut.video_x.value)
+    actual_video_x = dut.video_x.value.to_unsigned()
     assert (actual_video_x == video_x), (
         f"OUTPUT MISMATCH\n"
         f"For Hcount = {Hcount} and Vcount = {Vcount}\n"
@@ -83,7 +84,7 @@ def check_video(dut, Hcount, Vcount):
     )
 
     video_y = (Vcount - V_video_on) if (actual_video_on) else 0
-    actual_video_y = int(dut.video_y.value)
+    actual_video_y = dut.video_y.value.to_unsigned()
     assert (actual_video_y == video_y), (
         f"OUTPUT MISMATCH\n"
         f"For Hcount = {Hcount} and Vcount = {Vcount}\n"
@@ -91,10 +92,9 @@ def check_video(dut, Hcount, Vcount):
     )
 
 def check_outputs(dut, clkCycles):
-    clkCycles %= 420000
     H_TOTAL = timings.H_TOTAL
     expected_Hcount = int(clkCycles % H_TOTAL)
-    actual_Hcount = int(dut.Hcount.value)
+    actual_Hcount = dut.Hcount.value.to_unsigned()
     assert (actual_Hcount == expected_Hcount), (
         f"OUTPUT MISMATCH\n"
         f"clkCycles = {clkCycles}\n"
@@ -102,7 +102,7 @@ def check_outputs(dut, clkCycles):
     )
 
     expected_Vcount = clkCycles // H_TOTAL
-    actual_Vcount = int(dut.Vcount.value)
+    actual_Vcount = dut.Vcount.value.to_unsigned()
     assert (actual_Vcount == expected_Vcount), (
         f"Count MISMATCH\n"
         f"clkCycles = {clkCycles}\n"
@@ -117,16 +117,12 @@ def check_outputs(dut, clkCycles):
 async def test_vga_timing(dut):
 
     await init_test(dut)
-    check_inital(dut)
-    tot_cycles = 0
 
-    for i in range (25):
-        cycles = random.randint(1, 419999)
-        tot_cycles += cycles
-        await ClockCycles(dut.clk, cycles)
+    for i in range (1, 420000):
+        await RisingEdge(dut.clk)
         await Timer(1, 'ns')
 
-        check_outputs(dut, tot_cycles)
+        check_outputs(dut, i)
 
 
 
