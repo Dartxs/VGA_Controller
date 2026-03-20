@@ -2,14 +2,15 @@ TOPLEVEL_LANG = verilog
 SIM = verilator
 
 VERILOG_SOURCES = \
-	../../RTL/pixel_renderer.sv \
-	../../package/vga_controller_pkg.sv \
+	../../RTL/sprite_controller.sv \
+	../../package/vga_controller_pkg.sv
 
-TOPLEVEL = pixel_renderer
-COCOTB_TEST_MODULES = test_pixel_renderer
+TOPLEVEL = sprite_controller
+COCOTB_TEST_MODULES = test_sprite_controller
 
 EXTRA_ARGS += --trace --trace-structs
 EXTRA_ARGS += -I../../package
+EXTRA_ARGS += -GMOVE_FREQ=100000000
 
 export PYTHONPATH := ..:$(PYTHONPATH)
 

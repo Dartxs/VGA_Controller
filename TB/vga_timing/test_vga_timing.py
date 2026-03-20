@@ -12,7 +12,6 @@ async def init_test(dut):
     start_clock(dut)
 
     dut.areset.value = 1
-    await RisingEdge(dut.clk)
     await Timer(1, 'ns')
     check_inital(dut)
 

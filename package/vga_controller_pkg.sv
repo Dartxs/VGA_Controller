@@ -13,5 +13,10 @@ package vga_controller_pkg;
     parameter V_FRONT = 10;
     parameter V_TOTAL = 525;
 
+    parameter SPRITE_X_DIM = 16;
+    parameter SPRITE_Y_DIM = 16;
+    parameter SPRITE_MAX_X = H_VISIBLE - SPRITE_X_DIM;
+    parameter SPRITE_MAX_Y = V_VISIBLE - SPRITE_Y_DIM;
+
 endpackage
     

@@ -12,7 +12,6 @@ async def init_test(dut):
     start_clock(dut)
 
     dut.areset.value = 1
-    await RisingEdge(dut.clk)
     await Timer(1, 'ns')
     check_outputs(dut, 0)
     dut.areset.value = 0
@@ -21,21 +20,46 @@ def check_rgb(dut, x, y, on):
     actual_red = dut.red.value.to_unsigned()
     actual_green = dut.green.value.to_unsigned()
     actual_blue = dut.blue.value.to_unsigned()
-
+    sprite_x = dut.sprite_x.value.to_unsigned()
+    sprite_y = dut.sprite_y.value.to_unsigned()
+    
     red = 0
     green = 0
     blue = 0
 
     if(on):
-        on_ratio = 0xF if (y < 240) else 0x8
+        red = 0xF
+        green = 0xF
+        blue = 0xF
+        if((x >= sprite_x) and 
+           (y >= sprite_y) and 
+           ((sprite_x + 16) > x) and 
+           ((sprite_y + 16) > y)):
+            
+            rom = [
+            [int(bit) for bit in line.strip()]
+            for line in """
+            0000000000000000
+            0000110000110000
+            0001111001111000
+            0011111111111100
+            0111111111111110
+            0111111111111110
+            1111111111111111
+            1111111111111111
+            0111111111111110
+            0011111111111100
+            0001111111111000
+            0000111111110000
+            0000011111100000
+            0000001111000000
+            0000000110000000
+            0000000000000000
+            """.strip().splitlines()
+            ]
 
-        red_on = True if (x < 213) else False
-        green_on = True if ((x >= 213) and (x < 426)) else False
-        blue_on = True if (x >= 426) else False
-
-        red = on_ratio if (red_on) else 0
-        blue = on_ratio if(blue_on) else 0
-        green = on_ratio if(green_on) else 0
+            blue = 0 if (rom[y-sprite_y][x-sprite_x] == 1) else 0xF
+            green = 0 if (rom[y-sprite_y][x-sprite_x] == 1) else 0xF
 
     assert (actual_red == red), (
         f"\nOutput Color Mismatch\n"
