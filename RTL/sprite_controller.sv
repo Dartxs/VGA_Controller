@@ -1,14 +1,14 @@
 import vga_controller_pkg::*;
 
 module sprite_controller#(
-    parameter int MOVE_FREQ = 60
+    parameter int CLK_FREQ = 100000000, parameter int MOVE_FREQ = 150
     )(
-    input logic clk, areset, up, down, left, right,
+    input logic clk, reset, up, down, left, right,
     output logic [$clog2(SPRITE_MAX_X+1)-1:0] sprite_x,
     output logic [$clog2(SPRITE_MAX_Y+1)-1:0] sprite_y
 );
 
-    localparam int sprite_per = 100000000/MOVE_FREQ;
+    localparam int sprite_per = CLK_FREQ/MOVE_FREQ;
     localparam int tick_width = (sprite_per <= 1) ? 1 : $clog2(sprite_per);
     logic [tick_width-1:0] tick;
 
@@ -31,8 +31,8 @@ module sprite_controller#(
             next_x = sprite_x + 1;
     end
 
-    always_ff @(posedge clk or posedge areset) begin 
-        if(areset) begin
+    always_ff @(posedge clk or posedge reset) begin 
+        if(reset) begin
             sprite_x <= '0;
             sprite_y <= '0;
             tick <= '0;

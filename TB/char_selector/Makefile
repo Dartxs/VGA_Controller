@@ -2,11 +2,11 @@ TOPLEVEL_LANG = verilog
 SIM = verilator
 
 VERILOG_SOURCES = \
-	../../RTL/pixel_renderer.sv \
-	../../package/vga_controller_pkg.sv \
+	../../RTL/char_selector.sv \
+	../../package/vga_controller_pkg.sv
 
-TOPLEVEL = pixel_renderer
-COCOTB_TEST_MODULES = test_pixel_renderer
+TOPLEVEL = char_selector
+COCOTB_TEST_MODULES = test_char_selector
 
 EXTRA_ARGS += --trace --trace-structs
 EXTRA_ARGS += -I../../package

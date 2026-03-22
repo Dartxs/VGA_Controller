@@ -7,7 +7,7 @@ Module for managing Hsync, Vsync, and video_on timings
 import vga_controller_pkg::*;
 
 module vga_timing(
-    input logic clk, areset,
+    input logic clk, reset,
     output logic Hsync, Vsync, video_on, 
     output logic[$clog2(H_VISIBLE)-1:0] video_x, 
     output logic[$clog2(V_VISIBLE)-1:0] video_y
@@ -31,8 +31,8 @@ module vga_timing(
         end
     end
 
-    always_ff @(posedge clk or posedge areset) begin
-        if(areset) begin
+    always_ff @(posedge clk or posedge reset) begin
+        if(reset) begin
             Vcount <= '0;
             Hcount <= '0;
         end else if(Hcount == (H_TOTAL-1)) begin
@@ -46,8 +46,8 @@ module vga_timing(
             Hcount <= Hcount + 1;
     end
 
-    assign Hsync = areset ? 1'b1 : (Hcount >= H_SYNC);
-    assign Vsync = areset ? 1'b1 : (Vcount >= V_SYNC);
+    assign Hsync = reset ? 1'b1 : (Hcount >= H_SYNC);
+    assign Vsync = reset ? 1'b1 : (Vcount >= V_SYNC);
     assign video_on = ( ((Hcount >= H_VIDEO_ON) && (Hcount < H_VIDEO_OFF)) && 
                         ((Vcount >= V_VIDEO_ON) && (Vcount < V_VIDEO_OFF)) );
 

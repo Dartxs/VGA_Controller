@@ -11,3 +11,4 @@
 */*/__pycache__
 */*/sim_build
 !*.mem
+!README.md
